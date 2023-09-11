@@ -1,78 +1,68 @@
 version: "3"
 services:
     nginx:
+        container_name: fast-nginx
         build:
             context: .
             dockerfile: nginx/Dockerfile
-
         ports:
             - "8062:80"
-
         stdin_open: true
         tty: true
-
         volumes:
             - ../public:/usr/share/nginx/html/
-
         depends_on:
             - php
-
         networks:
             - backend
 
     php:
+        container_name: fast-php
         build:
             context: .
             dockerfile: php/Dockerfile
-
         env_file:
             - php/envVars.private
             - php/envVars.public
-
         stdin_open: true
         tty: true
-
         volumes:
+            - /var/www/vendor/
             - ..:/var/www
-
         networks:
             - backend
 
     nodejs:
+        container_name: fast-nodejs
         build:
             context: .
             dockerfile: nodejs/Dockerfile
-
         stdin_open: true
         tty: true
-
         volumes:
             - ..:/usr/share/nodejs/
 
     postgres:
+        container_name: fast-postgres
         build:
             context: .
             dockerfile: postgres/Dockerfile
-
         env_file:
             - postgres/envVars.private
             - postgres/envVars.public
-
         ports:
             - "5432:5432"
-
         volumes:
             - postgres-data:/var/lib/postgresql/data
-
         stdin_open: true
         tty: true
-
         networks:
             backend:
                 aliases:
                     - database.backend
 
     mailer:
+        container_name: fast-mailer
         build:
             context: .
             dockerfile: mailer/Dockerfile
@@ -81,19 +71,16 @@ services:
             - 1080
 
     blackfire:
+        container_name: fast-blackfire
         build:
             context: .
             dockerfile: blackfire/Dockerfile
-
         env_file:
             - blackfire/envVars.private
-
         environment:
             BLACKFIRE_LOG_LEVEL: 4
-
         stdin_open: true
         tty: true
-
         ports:
             - 8307
 

@@ -1,43 +1,31 @@
 doctrine:
     dbal:
-        default_connection: default
-        connections:
-            default:
-                wrapper_class: Doctrine\DBAL\Connections\PrimaryReadReplicaConnection
-                dbname: '%env(resolve:POSTGRES_PRIMARY_DB)%'
-                host: '%env(resolve:POSTGRES_PRIMARY_HOST)%'
-                port: '%env(resolve:POSTGRES_PRIMARY_PORT)%'
-                user: '%env(resolve:POSTGRES_PRIMARY_USER)%'
-                password: '%env(resolve:POSTGRES_PRIMARY_PASSWORD)%'
-                driver: pdo_pgsql
-                server_version: 15
-                charset: utf8
-                schema_filter: ~^(?!test)~
-                replicas:
-                    replica1:
-                        dbname: '%env(resolve:POSTGRES_REPLICA_DB)%'
-                        host: '%env(resolve:POSTGRES_REPLICA_HOST)%'
-                        port: '%env(resolve:POSTGRES_REPLICA_PORT)%'
-                        user: '%env(resolve:POSTGRES_REPLICA_USER)%'
-                        password: '%env(resolve:POSTGRES_REPLICA_PASSWORD)%'
-                        charset: utf8
+        url: '%env(resolve:DATABASE_URL)%'
 
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        #server_version: '15'
+
+        profiling_collect_backtrace: '%kernel.debug%'
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
-            SymfonyTheFastTrack:
+            App:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'adamcameron\symfonythefasttrack\Entity'
-                alias: SymfonyTheFastTrack
+                prefix: 'App\Entity'
+                alias: App
 
 when@test:
     doctrine:
         dbal:
-            dbname_suffix: ''
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 
 when@prod:
     doctrine:

@@ -1,13 +1,5 @@
 controllers:
     resource:
         path: ../src/Controller/
-        namespace: adamcameron\symfonythefasttrack\Controller
+        namespace: App\Controller
     type: attribute
-
-admin:
-    resource: routes/admin.yaml
-    prefix: /admin
-
-conference:
-    resource: routes/conference.yaml
-    prefix: /conference
